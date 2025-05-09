@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LAPAK LABUADAGO</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <!-- Animated Background -->
+  <div class="animated-background">
+    <div class="floating-dots"></div>
+    <div class="animated-shape shape1"></div>
+    <div class="animated-shape shape2"></div>
+    <div class="animated-shape shape3"></div>
+  </div>
+  <header class="bg-white/90 backdrop-blur-sm shadow-modern">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <nav class="space-x-6 text-gray-600 hidden md:flex items-center">
+        <a href="#" class="nav-link hover:text-indigo-600 transition font-semibold">Home</a>
+        <a href="#" class="nav-link hover:text-indigo-600 transition font-semibold">Features</a>
+        <a href="#" class="nav-link hover:text-indigo-600 transition font-semibold">Pricing</a>
+        <a href="#" class="nav-link hover:text-indigo-600 transition font-semibold">Contact</a>
+      </nav>
+  <button id="sidebarToggle" class="md:inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mr-4" aria-label="Toggle admin sidebar" aria-haspopup="true" aria-expanded="false" aria-controls="adminSidebar" title="Please login to access admin panel" disabled>
+    <i class="fas fa-user-cog mr-2"></i> Admin
+  </button>
+      <button id="menuButton" class="md:hidden text-indigo-600 focus:outline-none" aria-label="Toggle menu">
+        <i class="fas fa-bars fa-lg"></i>
+      </button>
+    </div>
+    <nav id="mobileMenu" class="hidden bg-white shadow-md md:hidden px-6 py-4 space-y-4">
+      <a href="#" class="block hover:text-indigo-600 transition font-semibold">Home</a>
+      <a href="#" class="block hover:text-indigo-600 transition font-semibold">Features</a>
+      <a href="#" class="block hover:text-indigo-600 transition font-semibold">Pricing</a>
+      <a href="#" class="block hover:text-indigo-600 transition font-semibold">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Admin Sidebar -->
+  <div id="adminSidebar" class="fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-50 flex flex-col" role="dialog" aria-modal="true" aria-labelledby="adminSidebarTitle" aria-hidden="true" tabindex="-1">
+    <div class="flex items-center justify-between p-4 border-b border-gray-200">
+      <h2 id="adminSidebarTitle" class="text-lg font-semibold">Admin Panel</h2>
+      <button id="sidebarClose" class="text-gray-600 hover:text-gray-800 focus:outline-none" aria-label="Close sidebar">
+        <i class="fas fa-times fa-lg"></i>
+      </button>
+    </div>
+    <div class="p-4 flex-grow flex flex-col space-y-4">
+      <div id="sidebarUserInfo" class="hidden flex flex-col items-center space-y-2" tabindex="0">
+        <i class="fas fa-user fa-3x text-indigo-600"></i>
+        <span id="sidebarUsername" class="text-lg font-semibold"></span>
+      </div>
+      <a href="admin/login.html" id="sidebarLoginButton" class="inline-flex items-center justify-center bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+        <i class="fas fa-user-lock mr-2"></i> Masuk Admin
+      </a>
+      <button id="sidebarLogoutButton" class="hidden bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- Sidebar Overlay -->
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-40"></div>
+
+  <script>
+    // Sidebar toggle functions
+    const sidebar = document.getElementById('adminSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarClose = document.getElementById('sidebarClose');
+
+    function openSidebar() {
+      sidebar.classList.remove('translate-x-full');
+      overlay.classList.remove('opacity-0', 'pointer-events-none');
+      overlay.classList.add('opacity-50', 'pointer-events-auto');
+      document.body.style.overflow = 'hidden';
+      sidebar.setAttribute('aria-hidden', 'false');
+      overlay.setAttribute('aria-hidden', 'false');
+      // Focus first focusable element in sidebar
+      const focusable = sidebar.querySelector('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusable) focusable.focus();
+    }
+
+    function closeSidebar() {
+      sidebar.classList.add('translate-x-full');
+      overlay.classList.add('opacity-0', 'pointer-events-none');
+      overlay.classList.remove('opacity-50', 'pointer-events-auto');
+      document.body.style.overflow = '';
+      sidebar.setAttribute('aria-hidden', 'true');
+      overlay.setAttribute('aria-hidden', 'true');
+      sidebarToggle.focus();
+    }
+
+    sidebarToggle.addEventListener('click', () => {
+      if (sidebar.classList.contains('translate-x-full')) {
+        openSidebar();
+      } else {
+        closeSidebar();
+      }
+    });
+
+    sidebarClose.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !sidebar.classList.contains('translate-x-full')) {
+        closeSidebar();
+      }
+    });
+
+    // Check login state and update sidebar content
+    function updateSidebar() {
+      let isLoggedIn = false;
+      let username = '';
+      try {
+        isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        username = localStorage.getItem('username') || '';
+      } catch (e) {
+        console.error('Error accessing localStorage', e);
+      }
+
+      const sidebarUserInfo = document.getElementById('sidebarUserInfo');
+      const sidebarUsername = document.getElementById('sidebarUsername');
+      const sidebarLoginButton = document.getElementById('sidebarLoginButton');
+      const sidebarLogoutButton = document.getElementById('sidebarLogoutButton');
+
+      if (isLoggedIn) {
+        sidebarUserInfo.classList.remove('hidden');
+        sidebarUsername.textContent = username;
+        sidebarLoginButton.classList.add('hidden');
+        sidebarLogoutButton.classList.remove('hidden');
+        sidebarToggle.removeAttribute('disabled');
+        sidebarToggle.removeAttribute('title');
+        sidebarToggle.setAttribute('aria-expanded', 'true');
+      } else {
+        sidebarUserInfo.classList.add('hidden');
+        sidebarUsername.textContent = '';
+        sidebarLoginButton.classList.remove('hidden');
+        sidebarLogoutButton.classList.add('hidden');
+        sidebarToggle.setAttribute('disabled', '');
+        sidebarToggle.setAttribute('title', 'Please login to access admin panel');
+        sidebarToggle.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateSidebar();
+
+      const sidebarLogoutButton = document.getElementById('sidebarLogoutButton');
+      sidebarLogoutButton.addEventListener('click', (e) => {
+        // Show loading overlay on logout
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        loadingOverlay.classList.remove('hidden');
+
+        // Remove e.preventDefault() to allow default behavior
+        try {
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('username');
+        } catch (e) {
+          console.error('Error clearing localStorage', e);
+        }
+        updateSidebar();
+        closeSidebar();
+
+        // Simulate delay for logout process and hide loading overlay
+        setTimeout(() => {
+          loadingOverlay.classList.add('hidden');
+          // Reload the page after logout
+          location.reload();
+        }, 1000);
+      });
+    });
+  </script>
+
+  <main class="container mx-auto px-6 py-20 flex flex-col space-y-8">
+    <!-- Main Content -->
+    <div class="relative">
+      <section class="text-center md:text-left relative bg-transparent p-8 min-h-[400px] z-20">
+        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat bg-overlay" style="background-image: url('fotokkn/kkn.jpg');"></div>
+        <div class="relative z-40">
+          <h2 class="text-4xl font-extrabold mb-4 text-white">Produk Badan Usaha Milik Desa Sulawesi Tengah</h2>
+          <p class="text-lg mb-8 max-w-xl mx-auto md:mx-0 text-white">Situs ini adalah sebuah program yang di khususkan untuk membantu UMKN yang ada di Desa Labuadago agar bisa berjualan di dalam wilayah maupun di luar wilayah hingga Ekspor/Impor yang dibuat oleh Mahasiswa KKNT Universitas Sintuwu Maroso Tahun 2025.</p>
+          <a href="#bottom-section" class="button-modern ripple inline-block bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition self-start">Get Started</a>
+        </div>
+      </section>
+    </div>
+
+    <!-- Profil Desa Section -->
+    <section class="py-12">
+      <div class="container mx-auto">
+        <h3 class="text-2xl font-bold mb-6 text-indigo-600">Profil Desa</h3>
+        <div class="mb-8">
+          <h4 class="text-lg font-semibold mb-4">Pengertian Desa</h4>
+          <p class="text-gray-700 max-w-4xl">
+            Desa Labuadago terletak di Kecamatan Lage, Kabupaten Poso, Sulawesi Tengah. Desa ini dikelilingi oleh pemandangan alam yang indah, termasuk pegunungan dan lahan pertanian yang subur.
+          </p>
+          <p class="text-gray-700 max-w-4xl">
+            Desa ini dihuni oleh masyarakat yang beragama, dengan mayoritas penduduknya adalah petani. Mereka mengandalkan pertanian sebagai sumber utama mata pencaharian, dengan komoditas seperti padi, jagung, dan sayuran.
+          </p>
+          <p class="text-gray-700 max-w-4xl">
+            Masyarakat Labuadago memiliki tradisi dan budaya yang kaya. Mereka sering mengadakan acara adat dan perayaan yang melibatkan seluruh warga desa. Kegiatan sosial seperti pernikahan, festival panen, dan acara keagamaan menjadi bagian penting dari kehidupan masyarakat.
+          </p>
+          <p class="text-gray-700 max-w-4xl">
+            Desa ini memiliki fasilitas pendidikan, mulai dari tingkat dasar hingga menengah. Sekolah-sekolah di desa ini berperan penting dalam meningkatkan tingkat pendidikan dan kesadaran masyarakat akan pentingnya pendidikan.
+          </p>
+          <p class="text-gray-700 max-w-4xl">
+            Infrastruktur di Desa Labuadago terus berkembang. Jalan akses menuju desa dan fasilitas umum seperti puskesmas, tempat ibadah, dan pasar desa telah dibangun untuk mendukung aktivitas masyarakat.
+          </p>
+          <p class="text-gray-700 max-w-4xl">
+            Dengan keindahan alamnya, Desa Labuadago memiliki potensi untuk dikembangkan sebagai destinasi wisata. Pemandangan alam yang menakjubkan dan budaya lokal yang unik dapat menarik wisatawan.
+          </p>
+          <p class="text-gray-700 max-w-4xl">
+            Masyarakat Labuadago aktif dalam berbagai kegiatan sosial, termasuk program-program pemberdayaan dan pelatihan keterampilan masyarakat. Hal ini bertujuan untuk meningkatkan kesejahteraan dan kualitas hidup warga desa.
+          </p>
+          <p class="text-gray-700 max-w-4xl">
+            Seperti banyak desa lainnya, Labuadago juga menghadapi tantangan, termasuk akses terhadap layanan kesehatan yang memadai, pendidikan yang berkualitas, dan pengembangan ekonomi yang berkelanjutan.
+          </p>
+          <p class="text-gray-700 max-w-4xl">
+            Desa Labuadago merupakan contoh dari komunitas yang berusaha untuk berkembang sambil mempertahankan nilai-nilai budaya dan tradisi mereka. Dengan potensi yang dimiliki, desa ini memiliki peluang untuk terus maju di masa depan.
+          </p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Informasi Umum</h4>
+            <ul class="space-y-3">
+              <li class="flex items-start space-x-2">
+                <i class="fas fa-map-marker-alt text-indigo-600 mt-1"></i>
+                <div>
+                  <span class="font-semibold">Alamat:</span>
+                  <p class="text-gray-600">Desa Labuadago, Kecamatan Lage, Kabupaten Poso</p>
+                </div>
+              </li>
+              <li class="flex items-start space-x-2">
+                <i class="fas fa-users text-indigo-600 mt-1"></i>
+                <div>
+                  <span class="font-semibold">Jumlah Penduduk:</span>
+                  <p class="text-gray-600">1045 Jiwa</p>
+                </div>
+              </li>
+              <li class="flex items-start space-x-2">
+                <i class="fas fa-ruler-combined text-indigo-600 mt-1"></i>
+                <div>
+                  <span class="font-semibold">Luas Wilayah:</span>
+                  <p class="text-gray-600">8.42 km²</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Kontak</h4>
+            <ul class="space-y-3">
+              <li class="flex items-start space-x-2">
+                <i class="fas fa-phone text-indigo-600 mt-1"></i>
+                <div>
+                  <span class="font-semibold">Telepon:</span>
+                  <p class="text-gray-600">+62 822-9186-2503</p>
+                </div>
+              </li>
+              <li class="flex items-start space-x-2">
+                <i class="fas fa-envelope text-indigo-600 mt-1"></i>
+                <div>
+                  <span class="font-semibold">Email:</span>
+                  <p class="text-gray-600">desa.labuadago@gmail.com</p>
+                </div>
+              </li>
+              <li class="flex items-start space-x-2">
+                <i class="fas fa-clock text-indigo-600 mt-1"></i>
+                <div>
+                  <span class="font-semibold">Jam Operasional:</span>
+                  <p class="text-gray-600">Senin - Jumat: 08:00 - 16:00</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="bg-white/90 backdrop-blur-sm py-16">
+    <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+      <div>
+        <i class="fas fa-rocket text-indigo-600 text-5xl mb-4"></i>
+        <h3 class="text-xl font-semibold mb-2">Fast Performance</h3>
+        <p class="text-gray-600">Our platform is optimized for speed and reliability to ensure your projects run smoothly.</p>
+      </div>
+      <div>
+        <i class="fas fa-cogs text-indigo-600 text-5xl mb-4"></i>
+        <h3 class="text-xl font-semibold mb-2">Customizable</h3>
+        <p class="text-gray-600">Easily tailor your projects with flexible tools and components to fit your needs.</p>
+      </div>
+      <div>
+        <i class="fas fa-headset text-indigo-600 text-5xl mb-4"></i>
+        <h3 class="text-xl font-semibold mb-2">24/7 Support</h3>
+        <p class="text-gray-600">Our dedicated support team is here to help you anytime, anywhere.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product List Section -->
+  <section id="bottom-section" class="bg-gray-50 py-12">
+    <div class="container mx-auto px-6 flex flex-col md:flex-row md:space-x-6">
+      <!-- Sidebar Daftar Produk -->
+      <aside class="md:w-1/4 mb-6 md:mb-0 relative overflow-hidden rounded-lg shadow-modern p-6 sticky top-20 sidebar-hover">
+        <div class="relative z-10">
+        <h3 class="text-xl font-bold mb-4 gradient-text text-shadow">Daftar Produk</h3>
+        <ul class="space-y-3">
+          <li>
+            <a href="#pertanian" class="nav-item flex items-center space-x-2 text-gray-700 hover:text-indigo-600 transition">
+              <i class="fas fa-seedling"></i>
+              <span>Pertanian</span>
+            </a>
+          </li>
+          <li>
+            <a href="#peternakan" class="nav-item flex items-center space-x-2 text-gray-700 hover:text-indigo-600 transition">
+              <i class="fas fa-dove"></i>
+              <span>Peternakan</span>
+            </a>
+          </li>
+          <li>
+            <a href="#perikanan" class="nav-item flex items-center space-x-2 text-gray-700 hover:text-indigo-600 transition">
+              <i class="fas fa-fish"></i>
+              <span>Perikanan</span>
+            </a>
+          </li>
+          <li>
+            <a href="#kerajinan" class="nav-item flex items-center space-x-2 text-gray-700 hover:text-indigo-600 transition">
+              <i class="fas fa-hands-helping"></i>
+              <span>Kerajinan</span>
+            </a>
+          </li>
+        </ul>
+        </div>
+      </aside>
+
+      <!-- Product Management and Grid -->
+      <div class="md:flex-1">
+        <h3 class="text-2xl font-bold mb-8 text-gray-800 flex justify-between items-center">
+          Semua Produk
+          <button id="addProductToggle" class="hidden bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <i class="fas fa-plus mr-2"></i> Tambah Produk
+          </button>
+        </h3>
+
+        <!-- Add Product Form -->
+        <form id="addProductForm" class="hidden mb-8 bg-white p-6 rounded-lg shadow space-y-4">
+          <h4 class="text-xl font-semibold text-indigo-600 mb-4">Tambah Produk Baru</h4>
+          <div>
+            <label for="productName" class="block font-semibold mb-1">Nama Produk</label>
+            <input type="text" id="productName" name="productName" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+          </div>
+          <div>
+          <label for="productImage" class="block font-semibold mb-1">Upload Gambar</label>
+          <input type="file" id="productImage" name="productImage" accept="image/*" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+          </div>
+        <div>
+          <label for="productDescription" class="block font-semibold mb-1">Deskripsi</label>
+          <textarea id="productDescription" name="productDescription" rows="3" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required></textarea>
+        </div>
+        <div>
+          <label for="productWhatsapp" class="block font-semibold mb-1">Nomor Whatsapp</label>
+          <input type="tel" id="productWhatsapp" name="productWhatsapp" placeholder="+6281234567890" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required pattern="^\+?\d{10,15}$" />
+        </div>
+        <div>
+          <label for="productCategory" class="block font-semibold mb-1">Kategori Produk</label>
+          <select id="productCategory" name="productCategory" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            <option value="" disabled selected>Pilih kategori</option>
+            <option value="pertanian">Pertanian</option>
+            <option value="peternakan">Peternakan</option>
+            <option value="perikanan">Perikanan</option>
+            <option value="kerajinan">Kerajinan</option>
+          </select>
+        </div>
+        <div class="flex justify-end space-x-4">
+          <button type="button" id="cancelAddProduct" class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 transition font-semibold">Batal</button>
+          <button type="submit" id="saveProductButton" class="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700 transition font-semibold">Simpan</button>
+        </div>
+      </form>
+
+        <div id="pertanian" class="mb-12">
+          <h4 class="text-xl font-semibold mb-6 text-indigo-600">Pertanian</h4>
+          <ul id="productList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <!-- Product cards will be rendered here -->
+          </ul>
+        </div>
+
+        <div id="peternakan" class="mb-12">
+          <h4 class="text-xl font-semibold mb-6 text-indigo-600">Peternakan</h4>
+          <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <li class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer group">
+              <h4 class="text-lg font-semibold mb-2">Produk 2</h4>
+              <p class="text-gray-600">Deskripsi singkat produk 2.</p>
+              <a href="https://wa.me/6282291862503?text=Saya%20tertarik%20untuk%20membeli%20Produk%202.%20Mohon%20informasi%20lebih%20lanjut." target="_blank" rel="noopener noreferrer" class="inline-flex items-center mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition font-semibold group-hover:scale-105 transform">
+                <i class="fab fa-whatsapp mr-2 text-2xl"></i> WhatsApp
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div id="perikanan" class="mb-12">
+          <h4 class="text-xl font-semibold mb-6 text-indigo-600">Perikanan</h4>
+          <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <li class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer group">
+              <h4 class="text-lg font-semibold mb-2">Produk 3</h4>
+              <p class="text-gray-600">Deskripsi singkat produk 3.</p>
+              <a href="https://wa.me/6282291862503?text=Saya%20tertarik%20untuk%20membeli%20Produk%203.%20Mohon%20informasi%20lebih%20lanjut." target="_blank" rel="noopener noreferrer" class="inline-flex items-center mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition font-semibold group-hover:scale-105 transform">
+                <i class="fab fa-whatsapp mr-2 text-2xl"></i> WhatsApp
+              </a>
+            </li>
+            <li class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer group">
+              <h4 class="text-lg font-semibold mb-2">Produk 4</h4>
+              <p class="text-gray-600">Deskripsi singkat produk 4.</p>
+              <a href="https://wa.me/6282291862503?text=Saya%20tertarik%20untuk%20membeli%20Produk%204.%20Mohon%20informasi%20lebih%20lanjut." target="_blank" rel="noopener noreferrer" class="inline-flex items-center mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition font-semibold group-hover:scale-105 transform">
+                <i class="fab fa-whatsapp mr-2 text-2xl"></i> WhatsApp
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div id="kerajinan" class="mb-12">
+          <h4 class="text-xl font-semibold mb-6 text-indigo-600">Kerajinan</h4>
+          <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <li class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer group">
+              <h4 class="text-lg font-semibold mb-2">Produk 5</h4>
+              <p class="text-gray-600">Deskripsi singkat produk 5.</p>
+              <a href="https://wa.me/6282291862503?text=Saya%20tertarik%20untuk%20membeli%20Produk%205.%20Mohon%20informasi%20lebih%20lanjut." target="_blank" rel="noopener noreferrer" class="inline-flex items-center mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition font-semibold group-hover:scale-105 transform">
+                <i class="fab fa-whatsapp mr-2 text-2xl"></i> WhatsApp
+              </a>
+            </li>
+            <li class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer group">
+              <h4 class="text-lg font-semibold mb-2">Produk 6</h4>
+              <p class="text-gray-600">Deskripsi singkat produk 6.</p>
+              <a href="https://wa.me/6282291862503?text=Saya%20tertarik%20untuk%20membeli%20Produk%206.%20Mohon%20informasi%20lebih%20lanjut." target="_blank" rel="noopener noreferrer" class="inline-flex items-center mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition font-semibold group-hover:scale-105 transform">
+                <i class="fab fa-whatsapp mr-2 text-2xl"></i> WhatsApp
+              </a>
+            </li>
+          </ul>
+        </div>
+    </div>
+  </section>
+
+  <!-- WhatsApp Service Center Button -->
+  <a href="https://wa.me/6282291862503?text=Halo,%20saya%20butuh%20bantuan" target="_blank" rel="noopener noreferrer" class="whatsapp-button service-center-btn fixed bottom-6 right-6 bg-green-500 text-white rounded-full p-4 shadow-lg hover:bg-green-600 transition-all transform hover:scale-110 z-50 flex items-center space-x-2">
+    <i class="fab fa-whatsapp text-2xl"></i>
+    <span class="hidden md:inline">Service Center</span>
+  </a>
+
+  <footer class="bg-white/90 backdrop-blur-sm py-8 text-center text-gray-600">
+    <div class="container mx-auto px-6 flex justify-center space-x-6 mb-4">
+      <a href="#" aria-label="Facebook" class="text-gray-600 hover:text-indigo-600 transition text-2xl"><i class="fab fa-facebook"></i></a>
+      <a href="#" aria-label="Twitter" class="text-gray-600 hover:text-indigo-600 transition text-2xl"><i class="fab fa-twitter"></i></a>
+      <a href="#" aria-label="Instagram" class="text-gray-600 hover:text-indigo-600 transition text-2xl"><i class="fab fa-instagram"></i></a>
+      <a href="#" aria-label="LinkedIn" class="text-gray-600 hover:text-indigo-600 transition text-2xl"><i class="fab fa-linkedin"></i></a>
+    </div>
+    &copy; 2025 CV. Konsultan Teknik Asindu.
+  </footer>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-20 w-20"></div>
+  </div>
+
+  <style>
+    .loader {
+      border-top-color: #6366f1;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+  <script>
+    // Intersection Observer for fade-in sections
+    const sections = document.querySelectorAll('section');
+    const observerOptions = {
+      root: null,
+      threshold: 0.1,
+      rootMargin: '0px'
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    sections.forEach(section => {
+      section.classList.add('section-fade');
+      observer.observe(section);
+    });
+
+    // Mobile menu toggle
+    const menuButton = document.getElementById('menuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Smooth scroll for sidebar links
+    document.querySelectorAll('aside ul li a').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 100,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+  <script>
+    // Load products from localStorage and render in product list
+    function createProductCard(product, index, isLoggedIn) {
+      const card = document.createElement('li');
+      card.className = 'product-card bg-white rounded-lg shadow p-6 hover:shadow-lg transition relative group';
+
+      card.innerHTML = `
+        <h4 class="text-lg font-semibold mb-2">${product.name}</h4>
+        <div class="image-hover">
+          <img src="${product.image}" alt="${product.name}" class="rounded-lg w-full h-40 object-cover mb-4" />
+        </div>
+        <p class="text-gray-600">${product.description}</p>
+        <p class="text-sm font-semibold text-indigo-600 mb-2 capitalize">Kategori: ${product.category || 'Tidak Diketahui'}</p>
+        <a href="https://wa.me/${encodeURIComponent(product.whatsapp)}?text=Saya%20tertarik%20untuk%20membeli%20${encodeURIComponent(product.name)}.%20Mohon%20informasi%20lebih%20lanjut." target="_blank" rel="noopener noreferrer" class="inline-flex items-center mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition font-semibold group-hover:scale-105 transform">
+          <i class="fab fa-whatsapp mr-2 text-2xl"></i> WhatsApp
+        </a>
+        ${isLoggedIn ? `<button data-index="${index}" class="deleteProduct absolute top-2 right-2 bg-red-600 text-white rounded-full p-2 hover:bg-red-700 transition focus:outline-none" aria-label="Delete product">
+          <i class="fas fa-trash-alt"></i>
+        </button>` : ''}
+        <div class="absolute inset-0 bg-indigo-600 bg-opacity-20 opacity-0 group-hover:opacity-100 transition rounded-lg pointer-events-none"></div>
+      `;
+
+      return card;
+    }
+
+    function loadProducts() {
+      const products = localStorage.getItem('products');
+      return products ? JSON.parse(products) : [];
+    }
+
+    function saveProducts(products) {
+      localStorage.setItem('products', JSON.stringify(products));
+    }
+
+    function renderProducts(isLoggedIn) {
+      const products = loadProducts();
+
+      // Clear all category product lists
+      const categories = ['pertanian', 'peternakan', 'perikanan', 'kerajinan'];
+      categories.forEach(category => {
+        const categoryList = document.querySelector(`#${category} ul`);
+        if (categoryList) {
+          categoryList.innerHTML = '';
+        }
+      });
+
+      products.forEach((product, index) => {
+        const productCard = createProductCard(product, index, isLoggedIn);
+        const categoryList = document.querySelector(`#${product.category} ul`);
+        if (categoryList) {
+          categoryList.appendChild(productCard);
+        }
+      });
+
+      if (isLoggedIn) {
+        document.querySelectorAll('.deleteProduct').forEach(button => {
+          button.addEventListener('click', (e) => {
+            const idx = parseInt(e.currentTarget.getAttribute('data-index'));
+            if (!isNaN(idx)) {
+              products.splice(idx, 1);
+              saveProducts(products);
+              renderProducts(true);
+            }
+          });
+        });
+      }
+    }
+
+    // Show/hide add product form and toggle button based on login state
+    function updateProductManagementUI(isLoggedIn) {
+      const addProductToggle = document.getElementById('addProductToggle');
+      const addProductForm = document.getElementById('addProductForm');
+      if (isLoggedIn) {
+        addProductToggle.classList.remove('hidden');
+      } else {
+        addProductToggle.classList.add('hidden');
+        addProductForm.classList.add('hidden');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      let isLoggedIn = false;
+      try {
+        isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      } catch (e) {
+        console.error('Error accessing localStorage', e);
+      }
+
+      updateProductManagementUI(isLoggedIn);
+      renderProducts(isLoggedIn);
+
+      const addProductToggle = document.getElementById('addProductToggle');
+      const addProductForm = document.getElementById('addProductForm');
+      const cancelAddProduct = document.getElementById('cancelAddProduct');
+
+      addProductToggle.addEventListener('click', () => {
+        addProductForm.classList.toggle('hidden');
+      });
+
+      cancelAddProduct.addEventListener('click', () => {
+        addProductForm.classList.add('hidden');
+      });
+
+      addProductForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('productName').value.trim();
+        const imageInput = document.getElementById('productImage');
+        const description = document.getElementById('productDescription').value.trim();
+        const whatsapp = document.getElementById('productWhatsapp').value.trim();
+        const category = document.getElementById('productCategory').value;
+
+        if (name && imageInput.files.length > 0 && description && whatsapp && category) {
+          const file = imageInput.files[0];
+
+          // Validate image file type and size (max 2MB)
+          const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+          const maxSize = 2 * 1024 * 1024; // 2MB
+
+          if (!validTypes.includes(file.type)) {
+            alert('Invalid image type. Please upload JPEG, PNG, GIF, or WEBP images.');
+            return;
+          }
+
+          if (file.size > maxSize) {
+            alert('Image size exceeds 2MB. Please upload a smaller image.');
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            const imageDataUrl = event.target.result;
+            const products = loadProducts();
+            products.push({ name, image: imageDataUrl, description, whatsapp, category });
+            saveProducts(products);
+            renderProducts(true);
+            addProductForm.reset();
+            addProductForm.classList.add('hidden');
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Listen for localStorage changes to update product list and login state in real-time
+      window.addEventListener('storage', (event) => {
+        if (event.key === 'products' || event.key === 'isLoggedIn') {
+          let isLoggedIn = false;
+          try {
+            isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+          } catch (e) {
+            console.error('Error accessing localStorage', e);
+          }
+          updateProductManagementUI(isLoggedIn);
+          renderProducts(isLoggedIn);
+        }
+      });
+
+      // Also listen for logout event triggered by sidebar logout button
+      const sidebarLogoutButton = document.getElementById('sidebarLogoutButton');
+      if (sidebarLogoutButton) {
+        sidebarLogoutButton.addEventListener('click', () => {
+          updateProductManagementUI(false);
+          renderProducts(false);
+          addProductForm.classList.add('hidden');
+        });
+      }
+    });
+  </script>
+</body>
+</html>
